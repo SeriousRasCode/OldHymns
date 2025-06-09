@@ -64,7 +64,7 @@ body, html {
   list-style-type: decimal !important;
   margin-left: 20px !important;
   padding-left: 25px; /* Reduce left/right padding so decimals align */
-  height:80%;
+  height:250px;
   overflow-y: auto;
   
 }
