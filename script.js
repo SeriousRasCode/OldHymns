@@ -19,9 +19,11 @@ let isSeeking = false;
 
 function updateProgressBar() {
   if (player && player.playing()) {
+    const currentTime = player.seek();
+    const duration = player.duration();
+    
+    // Only update visuals if not actively seeking
     if (!isSeeking) {
-      const currentTime = player.seek();
-      const duration = player.duration();
       let width = (currentTime / duration) * 100;
       progressBar.style.width = width + "%";
       seekSlider.value = currentTime;
@@ -35,13 +37,14 @@ function updateProgressBar() {
         ` ${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds} / ` +
         `${durationMinutes}:${durationSeconds < 10 ? '0' : ''}${durationSeconds}`;
     }
+    
     progressUpdater = requestAnimationFrame(updateProgressBar);
   }
 }
 
 function startProgressLoop() {
   if (progressUpdater) cancelAnimationFrame(progressUpdater);
-  updateProgressBar(); // Immediate update before starting loop
+  updateProgressBar();
 }
 
 function stopProgressLoop() {
@@ -126,17 +129,17 @@ trackList.forEach((track, index) => {
   });
 });
 
-// SEEK LOGIC
+// SEEK LOGIC - Improved version
 seekSlider.addEventListener('input', function() {
   isSeeking = true;
   const seekTime = Number(seekSlider.value);
   const duration = player.duration();
   
-  // Update progress bar during seeking
+  // Update visuals during seeking
   let width = (seekTime / duration) * 100;
   progressBar.style.width = width + "%";
   
-  // Update time display during seeking
+  // Update time display
   const currentMinutes = Math.floor(seekTime / 60);
   const currentSeconds = Math.floor(seekTime % 60);
   const durationMinutes = Math.floor(duration / 60);
@@ -151,10 +154,8 @@ seekSlider.addEventListener('change', function() {
     player.seek(Number(seekSlider.value));
   }
   isSeeking = false;
-  // Force immediate update and restart animation if playing
-  if (player && player.playing()) {
-    startProgressLoop();
-  }
+  // Force immediate update
+  updateProgressBar();
 });
 
 // Keyboard shortcuts
