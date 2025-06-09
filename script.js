@@ -24,21 +24,20 @@ function updateProgressBar() {
     const currentTime = player.seek();
     const duration = player.duration();
 
-    // Visual progress bar (width as percent)
+    // update progress bar and slider
     let width = (currentTime / duration) * 100;
     progressBar.style.width = width + "%";
-
-    // Slider
     seekSlider.value = currentTime;
 
-    // Display current time in minutes:seconds format
+    // update time display
     const currentMinutes = Math.floor(currentTime / 60);
     const currentSeconds = Math.floor(currentTime % 60);
     const durationMinutes = Math.floor(duration / 60);
     const durationSeconds = Math.floor(duration % 60);
     timeDisplay.textContent = ` ${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds} / ${durationMinutes}:${durationSeconds < 10 ? '0' : ''}${durationSeconds}`;
   }
-  if (player && player.playing()) {
+  // Only continue looping if playing and not seeking
+  if (player && player.playing() && !isSeeking) {
     progressUpdater = requestAnimationFrame(updateProgressBar);
   }
 }
@@ -47,7 +46,9 @@ function playPause() {
   if (player && !player.playing()) {
     player.play();
     playPauseBtn.innerHTML = '⏸️';
-    updateProgressBar(); // Resume progress updates!
+    // cancel previous loop if any, then restart
+    if (progressUpdater) cancelAnimationFrame(progressUpdater);
+    updateProgressBar();
   } else if (player) {
     player.pause();
     playPauseBtn.innerHTML = 'Play';
@@ -116,13 +117,16 @@ document.getElementById('prevBtn')?.addEventListener('click', playPrevious);
 // SEEKING
 seekSlider.addEventListener('input', function() {
   isSeeking = true;
+  if (progressUpdater) cancelAnimationFrame(progressUpdater);
 });
 seekSlider.addEventListener('change', function() {
   if (player) {
     player.seek(Number(seekSlider.value));
   }
   isSeeking = false;
-  // Restart progress animation if playing
+  // cancel any previous loop to avoid stacking
+  if (progressUpdater) cancelAnimationFrame(progressUpdater);
+  // Resume progress update if still playing
   if (player && player.playing()) {
     updateProgressBar();
   }
