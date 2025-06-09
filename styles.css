@@ -47,6 +47,7 @@ body, html {
   transition: transform 0.3s;
   display: flex;
   flex-direction: column;
+  height:100px;
 }
 .track-selection h2 {
   margin: 8px 0 4px 0;
@@ -63,7 +64,7 @@ body, html {
   list-style-type: decimal !important;
   margin-left: 20px !important;
   padding-left: 25px; /* Reduce left/right padding so decimals align */
-  max-height: 50%;
+  
   overflow-y: auto;
   
 }
