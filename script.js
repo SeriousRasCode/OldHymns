@@ -1,11 +1,11 @@
 const playPauseBtn = document.querySelector('.play-pause-btn');
-const progressBar = document.getElementById('progress'); // This is the visual bar
+const progressBar = document.getElementById('progress');
 const songTitle = document.getElementById('songTitle');
 const artistName = document.getElementById('artistName');
 const trackList = Array.from(document.querySelectorAll('.track-list li'));
 const seekSlider = document.getElementById('seekSlider');
 
-// Add a display element for time if you want
+// Add a display element for time if it doesn't exist
 let timeDisplay = document.getElementById('timeDisplay');
 if (!timeDisplay) {
   timeDisplay = document.createElement('span');
@@ -18,26 +18,27 @@ let currentTrack = 0;
 let progressUpdater = null;
 let isSeeking = false;
 
-// Fix: update to use seconds, not percent!
+// Update progress bar and slider
 function updateProgressBar() {
-  if (player && player.playing() && !isSeeking) {
-    const currentTime = player.seek();
-    const duration = player.duration();
+  if (player && player.playing()) {
+    if (!isSeeking) {
+      const currentTime = player.seek();
+      const duration = player.duration();
 
-    // update progress bar and slider
-    let width = (currentTime / duration) * 100;
-    progressBar.style.width = width + "%";
-    seekSlider.value = currentTime;
+      // Update visual bar
+      let width = (currentTime / duration) * 100;
+      progressBar.style.width = width + "%";
+      seekSlider.value = currentTime;
 
-    // update time display
-    const currentMinutes = Math.floor(currentTime / 60);
-    const currentSeconds = Math.floor(currentTime % 60);
-    const durationMinutes = Math.floor(duration / 60);
-    const durationSeconds = Math.floor(duration % 60);
-    timeDisplay.textContent = ` ${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds} / ${durationMinutes}:${durationSeconds < 10 ? '0' : ''}${durationSeconds}`;
-  }
-  // Only continue looping if playing and not seeking
-  if (player && player.playing() && !isSeeking) {
+      // Update time display
+      const currentMinutes = Math.floor(currentTime / 60);
+      const currentSeconds = Math.floor(currentTime % 60);
+      const durationMinutes = Math.floor(duration / 60);
+      const durationSeconds = Math.floor(duration % 60);
+      timeDisplay.textContent =
+        ` ${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds} / ` +
+        `${durationMinutes}:${durationSeconds < 10 ? '0' : ''}${durationSeconds}`;
+    }
     progressUpdater = requestAnimationFrame(updateProgressBar);
   }
 }
@@ -46,9 +47,8 @@ function playPause() {
   if (player && !player.playing()) {
     player.play();
     playPauseBtn.innerHTML = '⏸️';
-    // cancel previous loop if any, then restart
     if (progressUpdater) cancelAnimationFrame(progressUpdater);
-    updateProgressBar();
+    progressUpdater = requestAnimationFrame(updateProgressBar);
   } else if (player) {
     player.pause();
     playPauseBtn.innerHTML = 'Play';
@@ -59,6 +59,7 @@ function playPause() {
 function playTrack(trackUrl, trackIndex) {
   if (player) {
     player.stop();
+    if (progressUpdater) cancelAnimationFrame(progressUpdater);
   }
   
   player = new Howl({
@@ -70,7 +71,8 @@ function playTrack(trackUrl, trackIndex) {
       artistName.textContent = 'የኢትዮጵያ ኦርቶዶክስ ተዋህዶ ቤተክርስቲያን  ';
       seekSlider.max = player.duration();
       seekSlider.value = 0;
-      updateProgressBar();
+      if (progressUpdater) cancelAnimationFrame(progressUpdater);
+      progressUpdater = requestAnimationFrame(updateProgressBar);
     },
     onend: function() {
       playNext();
@@ -82,7 +84,8 @@ function playTrack(trackUrl, trackIndex) {
   });
 
   player.on('play', function() {
-    updateProgressBar();
+    if (progressUpdater) cancelAnimationFrame(progressUpdater);
+    progressUpdater = requestAnimationFrame(updateProgressBar);
   });
 
   player.on('end', function() {
@@ -111,23 +114,23 @@ trackList.forEach((track, index) => {
   });
 });
 
-document.getElementById('nextBtn')?.addEventListener('click', playNext);
-document.getElementById('prevBtn')?.addEventListener('click', playPrevious);
+// If you have next/prev buttons with IDs nextBtn/prevBtn, uncomment below and ensure IDs exist in your HTML
+// document.getElementById('nextBtn')?.addEventListener('click', playNext);
+// document.getElementById('prevBtn')?.addEventListener('click', playPrevious);
 
-// SEEKING
+// SEEK LOGIC
 seekSlider.addEventListener('input', function() {
   isSeeking = true;
-  if (progressUpdater) cancelAnimationFrame(progressUpdater);
+  if (progressUpdater) {
+    cancelAnimationFrame(progressUpdater);
+    progressUpdater = null;
+  }
 });
 seekSlider.addEventListener('change', function() {
   if (player) {
     player.seek(Number(seekSlider.value));
   }
   isSeeking = false;
-  // cancel any previous loop to avoid stacking
   if (progressUpdater) cancelAnimationFrame(progressUpdater);
-  // Resume progress update if still playing
-  if (player && player.playing()) {
-    updateProgressBar();
-  }
+  progressUpdater = requestAnimationFrame(updateProgressBar);
 });
