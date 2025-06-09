@@ -1,4 +1,4 @@
-body {
+body, html {
   text-align: center;
   font-family: 'CustomFont', sans-serif;
   margin: 0;
@@ -33,9 +33,10 @@ body {
   flex-direction: column;
 }
 
-/* --- MAKE TRACKLIST SMALL & SCROLLABLE --- */
+/* --- TRACK SELECTION STYLES --- */
 .track-selection {
   width: 19.25em;
+  max-width: 95vw;
   margin-bottom: 8px;
   background: linear-gradient(to bottom, #f9f9f9, #e1e1e1);
   padding: 12px;
@@ -46,6 +47,7 @@ body {
   transition: transform 0.3s;
   display: flex;
   flex-direction: column;
+  max-height:200px;
 }
 .track-selection h2 {
   margin: 8px 0 4px 0;
@@ -64,7 +66,6 @@ body {
   padding: 0;
   max-height: 200px;
   overflow-y: auto;
-  /* Make sure decimal appears on mobile too */
   display: block;
 }
 
@@ -83,6 +84,7 @@ a:hover {
   color: #666;
 }
 
+/* --- REST OF YOUR STYLES UNCHANGED --- */
 .music-player {
   width: 19.25em;
   background: linear-gradient(to bottom, #f9f9f9, #e1e1e1);
@@ -93,11 +95,9 @@ a:hover {
   text-align: center;
   transition: transform 0.3s;
 }
-
 .music-player:hover {
   transform: translateY(5px);
 }
-
 .player-controls {
   margin-top: 8px;
   margin-bottom: 20px;
@@ -106,7 +106,6 @@ a:hover {
   align-items: center;
   gap: 10px;
 }
-
 .player-controls button {
   width: 62px;
   background: linear-gradient(to right, #4CAF50, #45a049);
@@ -118,11 +117,9 @@ a:hover {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s;
 }
-
 .player-controls button:hover {
   background: linear-gradient(to right, #45a049, #4CAF50);
 }
-
 button {
   background-color: #4CAF50;
   color: #fff;
@@ -133,15 +130,12 @@ button {
   margin: 0 10px;
   text-align: center;
 }
-
 button:hover {
   background-color: #45a049;
 }
-
 .track-info {
   margin-bottom: 20px;
 }
-
 .progress-container {
   width: 80%;
   height: 0px;
@@ -150,7 +144,6 @@ button:hover {
   border-radius: 5px;
   overflow: hidden;
 }
-
 .progress {
   height: 100%;
   background-color: #4CAF50;
@@ -182,7 +175,7 @@ ol {
   src: url('sad3.ttf') format('truetype');
 }
 
-/* --- PIN HEADER AND PLAYER TO TOP/BOTTOM FOR MOBILE MINI-APP --- */
+/* --- MOBILE: DO NOT FILL SCREEN WIDTH, KEEP BOXED LOOK --- */
 @media (max-width: 600px) {
   html, body {
     min-height: 100vh;
@@ -209,20 +202,19 @@ ol {
     bottom: 0;
   }
   .track-selection {
-    width: 100vw;
-    max-width: 100vw;
-    box-sizing: border-box;
-    padding: 8px 2vw 8px 4vw;
+    width: 19.25em;
+    max-width: 95vw;
+    padding: 8px 0;
+    margin: 0 auto 8px auto;
   }
   .track-selection h2 {
     margin: 4px 0 2px 0;
-    font-size: 1.02em;
+    font-size: 1em;
   }
   .track-list {
     max-height: 85px;
     font-size: 0.97em;
     margin-left: 18px !important;
-    /* Make sure numbering appears */
     list-style-type: decimal !important;
     display: block;
   }
