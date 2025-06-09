@@ -47,8 +47,8 @@ body, html {
   transition: transform 0.3s;
   display: flex;
   flex-direction: column;
-  height:40%;
-  max-height:200px;
+  
+  
 }
 .track-selection h2 {
   margin: 8px 0 4px 0;
@@ -65,16 +65,16 @@ body, html {
   list-style-type: decimal !important;
   margin-left: 20px !important;
   padding: 17px;
-  max-height: 30% ;
+  max-height: 40% ;
   overflow-y: auto;
   display: block;
 }
 
-.track-list li {
-  margin-bottom: 10px;
+/*.track-list li {
+  margin-bottom: 5px;
   display: list-item;
   list-style-type: decimal;
-}
+}*/
 
 a {
   text-decoration: none;
