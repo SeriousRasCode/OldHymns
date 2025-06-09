@@ -5,105 +5,93 @@ const artistName = document.getElementById('artistName');
 const trackList = Array.from(document.querySelectorAll('.track-list li'));
 const seekSlider = document.getElementById('seekSlider');
 
-let timeDisplay = document.getElementById('timeDisplay');
-if (!timeDisplay) {
-  timeDisplay = document.createElement('span');
-  timeDisplay.id = 'timeDisplay';
-  progressBar.parentNode.insertBefore(timeDisplay, progressBar.nextSibling);
-}
+// Create time display if it doesn't exist
+let timeDisplay = document.getElementById('timeDisplay') || (() => {
+  const td = document.createElement('span');
+  td.id = 'timeDisplay';
+  progressBar.parentNode.insertBefore(td, progressBar.nextSibling);
+  return td;
+})();
 
 let player = null;
 let currentTrack = 0;
-let progressUpdater = null;
+let progressInterval = null;
 let isSeeking = false;
 
-function updateProgressBar() {
-  if (player && player.playing()) {
-    const currentTime = player.seek();
-    const duration = player.duration();
-    
-    // Only update visuals if not actively seeking
-    if (!isSeeking) {
-      let width = (currentTime / duration) * 100;
-      progressBar.style.width = width + "%";
-      seekSlider.value = currentTime;
+// More reliable progress updater using interval instead of RAF
+function updateProgress() {
+  if (!player || !player.playing() || isSeeking) return;
+  
+  const currentTime = player.seek();
+  const duration = player.duration();
+  
+  // Update progress bar
+  const progressPercent = (currentTime / duration) * 100;
+  progressBar.style.width = `${progressPercent}%`;
+  seekSlider.value = currentTime;
+  
+  // Update time display
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+  
+  timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+}
 
-      // Update time display
-      const currentMinutes = Math.floor(currentTime / 60);
-      const currentSeconds = Math.floor(currentTime % 60);
-      const durationMinutes = Math.floor(duration / 60);
-      const durationSeconds = Math.floor(duration % 60);
-      timeDisplay.textContent =
-        ` ${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds} / ` +
-        `${durationMinutes}:${durationSeconds < 10 ? '0' : ''}${durationSeconds}`;
-    }
-    
-    progressUpdater = requestAnimationFrame(updateProgressBar);
+function startProgressUpdates() {
+  stopProgressUpdates();
+  updateProgress(); // Immediate update
+  progressInterval = setInterval(updateProgress, 250); // Update 4 times per second
+}
+
+function stopProgressUpdates() {
+  if (progressInterval) {
+    clearInterval(progressInterval);
+    progressInterval = null;
   }
 }
 
-function startProgressLoop() {
-  if (progressUpdater) cancelAnimationFrame(progressUpdater);
-  updateProgressBar();
-}
-
-function stopProgressLoop() {
-  if (progressUpdater) cancelAnimationFrame(progressUpdater);
-  progressUpdater = null;
-}
-
 function playPause() {
-  if (player && !player.playing()) {
-    player.play();
-    playPauseBtn.innerHTML = '⏸️';
-    startProgressLoop();
-  } else if (player) {
+  if (!player) return;
+  
+  if (player.playing()) {
     player.pause();
     playPauseBtn.innerHTML = '▶️';
-    stopProgressLoop();
+    stopProgressUpdates();
+  } else {
+    player.play();
+    playPauseBtn.innerHTML = '⏸️';
+    startProgressUpdates();
   }
 }
 
 function playTrack(trackUrl, trackIndex) {
+  // Stop current player if exists
   if (player) {
     player.stop();
-    stopProgressLoop();
+    stopProgressUpdates();
   }
-  
+
   currentTrack = trackIndex;
   player = new Howl({
     src: [trackUrl],
     html5: true,
-    onplay: function() {
+    onplay: () => {
       playPauseBtn.innerHTML = '⏸️';
       songTitle.textContent = trackList[trackIndex].querySelector('a').textContent;
       artistName.textContent = 'የኢትዮጵያ ኦርቶዶክስ ተዋህዶ ቤተክርስቲያን';
       seekSlider.max = player.duration();
       seekSlider.value = 0;
-      progressBar.style.width = "0%";
-      startProgressLoop();
+      progressBar.style.width = '0%';
+      startProgressUpdates();
     },
-    onend: function() {
-      playNext();
-    }
-  });
-
-  player.on('load', function() {
-    seekSlider.max = player.duration();
-    seekSlider.value = 0;
-    progressBar.style.width = "0%";
-  });
-
-  player.on('play', function() {
-    startProgressLoop();
-  });
-
-  player.on('pause', function() {
-    stopProgressLoop();
-  });
-
-  player.on('end', function() {
-    playNext();
+    onload: () => {
+      seekSlider.max = player.duration();
+    },
+    onend: playNext,
+    onpause: stopProgressUpdates
   });
 
   player.play();
@@ -111,55 +99,60 @@ function playTrack(trackUrl, trackIndex) {
 
 function playNext() {
   currentTrack = (currentTrack + 1) % trackList.length;
-  const nextTrackUrl = trackList[currentTrack].querySelector('a').getAttribute('onclick').match(/'(.*?)'/)[1];
+  const nextTrackUrl = trackList[currentTrack].querySelector('a').getAttribute('onclick').match(/'([^']+)'/)[1];
   playTrack(nextTrackUrl, currentTrack);
 }
 
 function playPrevious() {
   currentTrack = (currentTrack - 1 + trackList.length) % trackList.length;
-  const prevTrackUrl = trackList[currentTrack].querySelector('a').getAttribute('onclick').match(/'(.*?)'/)[1];
+  const prevTrackUrl = trackList[currentTrack].querySelector('a').getAttribute('onclick').match(/'([^']+)'/)[1];
   playTrack(prevTrackUrl, currentTrack);
 }
 
-// Set up track list click handlers
+// Track list event handlers
 trackList.forEach((track, index) => {
-  track.addEventListener('click', function() {
-    const trackUrl = track.querySelector('a').getAttribute('onclick').match(/'(.*?)'/)[1];
+  track.addEventListener('click', () => {
+    const trackUrl = track.querySelector('a').getAttribute('onclick').match(/'([^']+)'/)[1];
     playTrack(trackUrl, index);
   });
 });
 
-// SEEK LOGIC - Improved version
-seekSlider.addEventListener('input', function() {
+// Improved seeking logic
+seekSlider.addEventListener('input', () => {
   isSeeking = true;
-  const seekTime = Number(seekSlider.value);
+  const seekTime = parseFloat(seekSlider.value);
   const duration = player.duration();
   
-  // Update visuals during seeking
-  let width = (seekTime / duration) * 100;
-  progressBar.style.width = width + "%";
+  // Update visuals during seek
+  progressBar.style.width = `${(seekTime / duration) * 100}%`;
   
   // Update time display
-  const currentMinutes = Math.floor(seekTime / 60);
-  const currentSeconds = Math.floor(seekTime % 60);
-  const durationMinutes = Math.floor(duration / 60);
-  const durationSeconds = Math.floor(duration % 60);
-  timeDisplay.textContent =
-    ` ${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds} / ` +
-    `${durationMinutes}:${durationSeconds < 10 ? '0' : ''}${durationSeconds}`;
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+  timeDisplay.textContent = `${formatTime(seekTime)} / ${formatTime(duration)}`;
 });
 
-seekSlider.addEventListener('change', function() {
-  if (player) {
-    player.seek(Number(seekSlider.value));
-  }
+seekSlider.addEventListener('change', () => {
+  if (!player) return;
+  
+  const seekTime = parseFloat(seekSlider.value);
+  player.seek(seekTime);
   isSeeking = false;
+  
   // Force immediate update
-  updateProgressBar();
+  updateProgress();
+  
+  // Restart updates if playing
+  if (player.playing()) {
+    startProgressUpdates();
+  }
 });
 
-// Keyboard shortcuts
-document.addEventListener('keydown', function(e) {
+// Keyboard controls
+document.addEventListener('keydown', (e) => {
   if (!player) return;
   
   switch(e.code) {
@@ -182,9 +175,8 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// Initialize first track if available
+// Initialize with first track if available
 if (trackList.length > 0) {
-  const firstTrackUrl = trackList[0].querySelector('a').getAttribute('onclick').match(/'(.*?)'/)[1];
-  // Uncomment to autoplay first track
-  // playTrack(firstTrackUrl, 0); 
+  const firstTrackUrl = trackList[0].querySelector('a').getAttribute('onclick').match(/'([^']+)'/)[1];
+  // playTrack(firstTrackUrl, 0); // Uncomment to autoplay first track
 }
