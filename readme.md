@@ -3,6 +3,8 @@
 
 This project is a simple web page for listening to classic Ethiopian Orthodox hymns (mezmurs) from 1950-1970 ዓ.ም (Ethiopian Calendar). The interface allows you to select from a list of hymns and play them directly in your browser.
 
+Demo is here [https://orthodoxoldhymns.netlify.app/]
+
 ## Features
 
 - 🎵 Select from a curated list of old mezmurs (hymns).
