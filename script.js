@@ -27,9 +27,9 @@ function playTrack(trackUrl, trackIndex) {
     src: [trackUrl],
     html5: true,
     onplay: function() {
-      playPauseBtn.innerHTML = 'Pause';
+      playPauseBtn.innerHTML = '⏸️';
       songTitle.textContent = trackList[trackIndex].querySelector('a').textContent;
-      artistName.textContent = 'Ethiopian Orthodox Church';
+      artistName.textContent = 'የኢትዮጵያ ኦርቶዶክስ ተዋህዶ ቤተክርስቲያን  ';
     },
     onend: function() {
       playNext();
