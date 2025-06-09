@@ -52,7 +52,7 @@ body, html {
   margin: 8px 0 4px 0;
   font-size: 1.1em;
   line-height: 1.1;
-  padding: 8;
+  padding: 8px;
   font-weight: 600;
 }
 .track-selection:hover {
@@ -65,7 +65,7 @@ body, html {
   padding-left: 25px; /* Reduce left/right padding so decimals align */
   max-height: 50%;
   overflow-y: auto;
-  padding-top:12px;
+  
 }
 
 .track-list li {
