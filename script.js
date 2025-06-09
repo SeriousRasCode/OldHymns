@@ -11,7 +11,7 @@ let currentTrack = 0;
 function playPause() {
   if (player && !player.playing()) {
     player.play();
-    playPauseBtn.innerHTML = 'Pause';
+    playPauseBtn.innerHTML = '⏸️';
   } else if (player) {
     player.pause();
     playPauseBtn.innerHTML = 'Play';
