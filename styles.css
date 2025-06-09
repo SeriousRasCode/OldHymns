@@ -47,7 +47,7 @@ body, html {
   transition: transform 0.3s;
   display: flex;
   flex-direction: column;
-  height:30%;
+  height:40%;
   max-height:200px;
 }
 .track-selection h2 {
@@ -64,8 +64,8 @@ body, html {
 .track-list {
   list-style-type: decimal !important;
   margin-left: 20px !important;
-  padding: 0;
-  max-height: 200px;
+  padding: 10px;
+  max-height: 30% ;
   overflow-y: auto;
   display: block;
 }
