@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>የቀድሞ ዝማሬዎች</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+<script src="https://cdn.jsdelivr.net/npm/howler@2.2.3/dist/howler.min.js"></script>
+  <div class="header">
+    <div><p>ከ1950-1970 ዓ.ም የተደረሱ ዝማሬዎች</p></div>
+    <img src="headerimg.gif" alt="Decorative GIF Image">
+  </div>
+  <div class="track-selection">
+    <h2>የመዝሙር መምረጫ</h2>
+    <ol class="track-list">
+      <li><a href="#" onclick="playTrack('http://www.ethiopianorthodox.org/churchmusic/mezmuretewhedo/no1/02%20kirstos%20besemeh.mp3')">Kirstos Besemeh</a></li>
+      <li><a href="#" onclick="playTrack('http://www.ethiopianorthodox.org/churchmusic/mezmuretewhedo/no1/03%20fikerena%20selam.mp3')">Fikerena Selam</a></li>
+      <li><a href="#" onclick="playTrack('http://www.ethiopianorthodox.org/churchmusic/mezmuretewhedo/no1/06%20hosanna.mp3')">Hosanna</a></li>
+      <li><a href="#" onclick="playTrack('http://www.ethiopianorthodox.org/churchmusic/mezmuretewhedo/no1/11%20niger%20beale.mp3')">ንግበር በዓለ</a></li>
+    </ol>
+  </div>
+  <div class="music-player">
+    <div class="track-info">
+      <h2 id="songTitle">መዝሙር ምረጥ</h2>
+      <p id="artistName">የዘማሪ ስም</p>
+    </div>
+    <div class="progress-container">
+      <div class="progress" id="progress"></div>
+    </div>
+    <input type="range" id="seekSlider" min="0" value="0" step="1">
+    <audio id="audioPlayer"></audio>
+    <div class="player-controls">
+      <button class="prev-btn" onclick="playPrevious()">&#9668;</button>
+      <button class="play-pause-btn" onclick="playPause()">&#9658;</button>
+      <button class="next-btn" onclick="playNext()">&#9658;</button>
+    </div>
+  </div>
+  <div class="infos"><a href="https://t.me/Andmta_Trguamie">ተሰራ በአንድምታ ትርጓሜ - በድምፅ ገጽ</a></div>
+  <div class="info">ድምጽ ከTewahedo.Org, 2017 ዓ.ም</div> 
+</div>
+
+<script src="scripts.js"></script>
+</body>
+</html>
