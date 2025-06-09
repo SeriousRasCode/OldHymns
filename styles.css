@@ -35,7 +35,7 @@ body, html {
 
 /* --- TRACK SELECTION STYLES --- */
 .track-selection {
-  width: 19.25em;
+  width: 22em;
   max-width: 95vw;
   margin-bottom: 8px;
   background: linear-gradient(to bottom, #f9f9f9, #e1e1e1);
@@ -47,14 +47,12 @@ body, html {
   transition: transform 0.3s;
   display: flex;
   flex-direction: column;
-  
-  
 }
 .track-selection h2 {
   margin: 8px 0 4px 0;
   font-size: 1.1em;
   line-height: 1.1;
-  padding: 4;
+  padding: 0;
   font-weight: 600;
 }
 .track-selection:hover {
@@ -64,17 +62,15 @@ body, html {
 .track-list {
   list-style-type: decimal !important;
   margin-left: 20px !important;
-  padding: 17px;
-  max-height: 40% ;
+  padding: 17px 0 17px 0; /* Reduce left/right padding so decimals align */
+  max-height: 40%;
   overflow-y: auto;
-  display: block;
 }
 
-/*.track-list li {
+.track-list li {
   margin-bottom: 5px;
-  display: list-item;
-  list-style-type: decimal;
-}*/
+  /* Remove list-style-type and display here to keep continuous numbering */
+}
 
 a {
   text-decoration: none;
@@ -87,7 +83,8 @@ a:hover {
 
 /* --- REST OF YOUR STYLES UNCHANGED --- */
 .music-player {
-  width: 19.25em;
+  width: 22em;
+  max-width: 95vw;
   background: linear-gradient(to bottom, #f9f9f9, #e1e1e1);
   padding: 20px;
   border: 2px solid #ccc;
@@ -203,7 +200,7 @@ ol {
     bottom: 0;
   }
   .track-selection {
-    width: 19.25em;
+    width: 22em;
     max-width: 95vw;
     padding: 8px 0;
     margin: 0 auto 8px auto;
@@ -217,10 +214,5 @@ ol {
     font-size: 0.97em;
     margin-left: 18px !important;
     list-style-type: decimal !important;
-    display: block;
-  }
-  .track-list li {
-    display: list-item;
-    list-style-type: decimal;
   }
 }
