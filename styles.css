@@ -62,8 +62,8 @@ body, html {
 .track-list {
   list-style-type: decimal !important;
   margin-left: 20px !important;
-  padding: 17px 0 17px 0; /* Reduce left/right padding so decimals align */
-  max-height: 40%;
+  padding-left: 20px; /* Reduce left/right padding so decimals align */
+  max-height: 50%;
   overflow-y: auto;
 }
 
