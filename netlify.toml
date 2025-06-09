@@ -1,6 +1,0 @@
-[build]
-  functions = "netlify/functions"
-  publish = "public" # or "." if there's no frontend
-
-[functions]
-  node_bundler = "esbuild"
