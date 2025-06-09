@@ -11,10 +11,10 @@ let currentTrack = 0;
 function playPause() {
   if (player && !player.playing()) {
     player.play();
-    playPauseBtn.innerHTML = 'አቁም';
+    playPauseBtn.innerHTML = 'Pause';
   } else if (player) {
     player.pause();
-    playPauseBtn.innerHTML = 'አጫውት';
+    playPauseBtn.innerHTML = 'Play';
   }
 }
 
@@ -27,7 +27,7 @@ function playTrack(trackUrl, trackIndex) {
     src: [trackUrl],
     html5: true,
     onplay: function() {
-      playPauseBtn.innerHTML = 'አቁም';
+      playPauseBtn.innerHTML = 'Pause';
       songTitle.textContent = trackList[trackIndex].querySelector('a').textContent;
       artistName.textContent = 'Ethiopian Orthodox Church';
     },
@@ -41,7 +41,7 @@ function playTrack(trackUrl, trackIndex) {
     seekSlider.max = player.duration();
   });
 
-  player.on('አጫውት', function() {
+  player.on('play', function() {
     updateProgressBar();
   });
 
