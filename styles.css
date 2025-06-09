@@ -35,7 +35,7 @@ body, html {
 
 /* --- TRACK SELECTION STYLES --- */
 .track-selection {
-  width: 19.25em;
+  width: 22em;
   max-width: 95vw;
   margin-bottom: 8px;
   background: linear-gradient(to bottom, #f9f9f9, #e1e1e1);
@@ -47,6 +47,7 @@ body, html {
   transition: transform 0.3s;
   display: flex;
   flex-direction: column;
+  height:30%;
   max-height:200px;
 }
 .track-selection h2 {
