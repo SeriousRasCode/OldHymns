@@ -122,5 +122,8 @@ seekSlider.addEventListener('change', function() {
     player.seek(Number(seekSlider.value));
   }
   isSeeking = false;
-  updateProgressBar();
+  // Restart progress animation if playing
+  if (player && player.playing()) {
+    updateProgressBar();
+  }
 });
