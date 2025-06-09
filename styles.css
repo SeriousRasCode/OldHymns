@@ -23,7 +23,7 @@ body, html {
 .container img {
   width: 22em;
   border-radius: 10px;
-  margin-bottom: 2px;
+  margin-bottom: 5px;
 }
 .header {
   align-items: left;
@@ -39,7 +39,7 @@ body, html {
   max-width: 95vw;
   margin-bottom: 8px;
   background: linear-gradient(to bottom, #f9f9f9, #e1e1e1);
-  padding: 15px;
+  padding: 25px;
   border: 2px solid #ccc;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -52,7 +52,7 @@ body, html {
   margin: 8px 0 4px 0;
   font-size: 1.1em;
   line-height: 1.1;
-  padding: 0;
+  padding: 8;
   font-weight: 600;
 }
 .track-selection:hover {
@@ -65,10 +65,12 @@ body, html {
   padding-left: 25px; /* Reduce left/right padding so decimals align */
   max-height: 50%;
   overflow-y: auto;
+  padding-top:12px;
 }
 
 .track-list li {
   margin-bottom: 5px;
+  padding:12px;
   /* Remove list-style-type and display here to keep continuous numbering */
 }
 
@@ -83,7 +85,7 @@ a:hover {
 
 /* --- REST OF YOUR STYLES UNCHANGED --- */
 .music-player {
-  width: 22em;
+  width: 19.25em;
   max-width: 95vw;
   background: linear-gradient(to bottom, #f9f9f9, #e1e1e1);
   padding: 20px;
