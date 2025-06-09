@@ -35,11 +35,11 @@ body, html {
 
 /* --- TRACK SELECTION STYLES --- */
 .track-selection {
-  width: 22em;
+  width: 19.25em;
   max-width: 95vw;
   margin-bottom: 8px;
   background: linear-gradient(to bottom, #f9f9f9, #e1e1e1);
-  padding: 12px;
+  padding: 15px;
   border: 2px solid #ccc;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
