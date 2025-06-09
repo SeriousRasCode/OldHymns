@@ -50,14 +50,11 @@ body {
 }
 
 .track-list {
-  list-style-type: none;
+  list-style-type: decimal !important;
+  margin-left: 20px !important;
   padding: 0;
-  margin: 0;
-  max-height: 160px; /* Small container height for mini-app */
-  overflow-y: auto;   /* Scrollable */
-  border-radius: 7px;
-  background: #f9f9f9;
-  box-shadow: 0 0 2px #ccc;
+  max-height: 160px;
+  overflow-y: auto;
 }
 
 .track-list li {
