@@ -26,7 +26,7 @@ function updateProgressBar() {
       progressBar.style.width = width + "%";
       seekSlider.value = currentTime;
 
-      // time display
+      // Update time display
       const currentMinutes = Math.floor(currentTime / 60);
       const currentSeconds = Math.floor(currentTime % 60);
       const durationMinutes = Math.floor(duration / 60);
@@ -41,7 +41,7 @@ function updateProgressBar() {
 
 function startProgressLoop() {
   if (progressUpdater) cancelAnimationFrame(progressUpdater);
-  progressUpdater = requestAnimationFrame(updateProgressBar);
+  updateProgressBar(); // Immediate update before starting loop
 }
 
 function stopProgressLoop() {
@@ -56,7 +56,7 @@ function playPause() {
     startProgressLoop();
   } else if (player) {
     player.pause();
-    playPauseBtn.innerHTML = 'Play';
+    playPauseBtn.innerHTML = '▶️';
     stopProgressLoop();
   }
 }
@@ -66,15 +66,18 @@ function playTrack(trackUrl, trackIndex) {
     player.stop();
     stopProgressLoop();
   }
+  
+  currentTrack = trackIndex;
   player = new Howl({
     src: [trackUrl],
     html5: true,
     onplay: function() {
       playPauseBtn.innerHTML = '⏸️';
       songTitle.textContent = trackList[trackIndex].querySelector('a').textContent;
-      artistName.textContent = 'የኢትዮጵያ ኦርቶዶክስ ተዋህዶ ቤተክርስቲያን  ';
+      artistName.textContent = 'የኢትዮጵያ ኦርቶዶክስ ተዋህዶ ቤተክርስቲያን';
       seekSlider.max = player.duration();
       seekSlider.value = 0;
+      progressBar.style.width = "0%";
       startProgressLoop();
     },
     onend: function() {
@@ -84,6 +87,8 @@ function playTrack(trackUrl, trackIndex) {
 
   player.on('load', function() {
     seekSlider.max = player.duration();
+    seekSlider.value = 0;
+    progressBar.style.width = "0%";
   });
 
   player.on('play', function() {
@@ -113,6 +118,7 @@ function playPrevious() {
   playTrack(prevTrackUrl, currentTrack);
 }
 
+// Set up track list click handlers
 trackList.forEach((track, index) => {
   track.addEventListener('click', function() {
     const trackUrl = track.querySelector('a').getAttribute('onclick').match(/'(.*?)'/)[1];
@@ -123,19 +129,61 @@ trackList.forEach((track, index) => {
 // SEEK LOGIC
 seekSlider.addEventListener('input', function() {
   isSeeking = true;
-  // Do not update progress while seeking
+  const seekTime = Number(seekSlider.value);
+  const duration = player.duration();
+  
+  // Update progress bar during seeking
+  let width = (seekTime / duration) * 100;
+  progressBar.style.width = width + "%";
+  
+  // Update time display during seeking
+  const currentMinutes = Math.floor(seekTime / 60);
+  const currentSeconds = Math.floor(seekTime % 60);
+  const durationMinutes = Math.floor(duration / 60);
+  const durationSeconds = Math.floor(duration % 60);
+  timeDisplay.textContent =
+    ` ${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds} / ` +
+    `${durationMinutes}:${durationSeconds < 10 ? '0' : ''}${durationSeconds}`;
 });
+
 seekSlider.addEventListener('change', function() {
   if (player) {
     player.seek(Number(seekSlider.value));
   }
   isSeeking = false;
-  // Resume animation ONLY if playing
+  // Force immediate update and restart animation if playing
   if (player && player.playing()) {
     startProgressLoop();
   }
 });
 
-// If you have next/prev buttons with IDs nextBtn/prevBtn, uncomment below and ensure IDs exist in your HTML
-// document.getElementById('nextBtn')?.addEventListener('click', playNext);
-// document.getElementById('prevBtn')?.addEventListener('click', playPrevious);
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+  if (!player) return;
+  
+  switch(e.code) {
+    case 'Space':
+      e.preventDefault();
+      playPause();
+      break;
+    case 'ArrowRight':
+      player.seek(Math.min(player.seek() + 10, player.duration()));
+      break;
+    case 'ArrowLeft':
+      player.seek(Math.max(player.seek() - 10, 0));
+      break;
+    case 'ArrowUp':
+      playNext();
+      break;
+    case 'ArrowDown':
+      playPrevious();
+      break;
+  }
+});
+
+// Initialize first track if available
+if (trackList.length > 0) {
+  const firstTrackUrl = trackList[0].querySelector('a').getAttribute('onclick').match(/'(.*?)'/)[1];
+  // Uncomment to autoplay first track
+  // playTrack(firstTrackUrl, 0); 
+}
